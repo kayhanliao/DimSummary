@@ -6,6 +6,7 @@ from flask import Flask, render_template, request
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField
 from wtforms.validators import DataRequired
+from transformers import pipeline, set_seed
 #from google.cloud import storage
 # from flask.ext.sqlalchemy import SQLAlchemy
 import logging
@@ -62,11 +63,14 @@ def summarizer(restaraunt_name):
 @app.route('/', methods=['POST', 'GET'])
 def home():
     form = BasicForm()
+    generator = pipeline('text-generation', model='openai-gpt')
+    set_seed(42)
     if request.method == 'POST':
         # restaraunt_name = Flask.request.form['restaraunt_name']
         # top, low, newest, elite = summarizer(restaraunt_name) 
-        text = request.form['ids']
-        top, low, newest, elite = text, text, text, text          
+        pred = generator("Hello, I'm a language model,",
+                         max_length=50, num_return_sequences=1)[0]['generated_text']
+        top, low, newest, elite = pred, pred, pred, pred        
         return render_template('pages/placeholder.home.html',
                                form=form, top_comm=top,
                                bottom_comm=low, newest_comm=newest,
