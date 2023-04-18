@@ -3,6 +3,7 @@
 #----------------------------------------------------------------------------#
 
 from flask import Flask, render_template, request
+from google.cloud import storage
 # from flask.ext.sqlalchemy import SQLAlchemy
 import logging
 from logging import Formatter, FileHandler
@@ -40,6 +41,13 @@ def login_required(test):
 # Controllers.
 #----------------------------------------------------------------------------#
 def summarizer(restaraunt_name):
+    # storage_client = storage.Client()
+
+    # bucket = storage_client.bucket('your-gcs-bucket')
+    # blob = bucket.blob('dictionary.pickle')
+    # pickle_in = blob.download_as_string()
+    # loaded_model= pickle.loads(pickle_in)
+
     loaded_model = pickle.load(open('model.pkl', 'rb'))
     result = loaded_model.predict(restaraunt_name)
     return result[0], result[1], result[2], result[3]
