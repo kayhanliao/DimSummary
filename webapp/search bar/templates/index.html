@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<head>
+    <title>Simple Search Engine</title>
+</head>
+<body>
+    <form action="/search" method="POST">
+        {{form.csrf_token}}
+        {{form.ids}}
+        {{form.submit}}
+    </form>
+</body>
