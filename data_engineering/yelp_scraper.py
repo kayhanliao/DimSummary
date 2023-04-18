@@ -10,7 +10,7 @@ from bs4 import BeautifulSoup
 
 
 def retrieve_reviews(url):
-    content = requests.get(url)
+    content = requests.get(url,timeout=20)
     soup = BeautifulSoup(content.content, "html.parser")
     relevant = soup.find_all('p', class_='comment__09f24__gu0rG css-qgunke')
     reviews = []
@@ -42,10 +42,10 @@ class YelpScraper:
         self.params['limit'] = 1
         self.params['offset'] = 0
 
-        r = requests.get(self.url,headers=self.api_header)
-        result = json.loads(r.text)
-        scrape_url = result['businesses'][0]['url'].split('?')[0]
+        response = requests.get(self.url,headers=self.api_header,timeout=25)
 
+        result = json.loads(response.text)
+        scrape_url = result['businesses'][0]['url'].split('?')[0]
 
         top_rated_url = os.path.join(scrape_url,'?sort_by=rating_desc')
         low_rated_url = os.path.join(scrape_url,'?sort_by=rating_asc')
