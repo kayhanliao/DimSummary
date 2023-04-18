@@ -3,7 +3,10 @@
 #----------------------------------------------------------------------------#
 
 from flask import Flask, render_template, request
-from google.cloud import storage
+from flask_wtf import FlaskForm
+from wtforms import StringField, SubmitField
+from wtforms.validators import DataRequired
+#from google.cloud import storage
 # from flask.ext.sqlalchemy import SQLAlchemy
 import logging
 from logging import Formatter, FileHandler
@@ -40,6 +43,10 @@ def login_required(test):
 #----------------------------------------------------------------------------#
 # Controllers.
 #----------------------------------------------------------------------------#
+class BasicForm(FlaskForm):
+    ids = StringField("ID",validators=[DataRequired()])
+    submit = SubmitField("Submit")
+
 def summarizer(restaraunt_name):
     # storage_client = storage.Client()
 
@@ -52,18 +59,20 @@ def summarizer(restaraunt_name):
     result = loaded_model.predict(restaraunt_name)
     return result[0], result[1], result[2], result[3]
 
-@app.route('/')
+@app.route('/', methods=['POST', 'GET'])
 def home():
-    return render_template('pages/placeholder.home.html')
-
-@app.route('/result', methods = ['POST'])
-def result():
-    if Flask.request.method == 'POST':
-        restaraunt_name = Flask.request.form['restaraunt_name']
-        top, low, newest, elite = summarizer(restaraunt_name)        
-        return Flask.render_template("result.html", top_comm=top,
-                                     bottom_comm=low, newest_comm=newest,
-                                     elite_comm=elite)
+    form = BasicForm()
+    if request.method == 'POST':
+        # restaraunt_name = Flask.request.form['restaraunt_name']
+        # top, low, newest, elite = summarizer(restaraunt_name) 
+        text = request.form['ids']
+        top, low, newest, elite = text, text, text, text          
+        return render_template('pages/placeholder.home.html',
+                               form=form, top_comm=top,
+                               bottom_comm=low, newest_comm=newest,
+                               elite_comm=elite)
+    return render_template('pages/placeholder.home.html',
+                           form=form)
 
 @app.route('/about')
 def about():
