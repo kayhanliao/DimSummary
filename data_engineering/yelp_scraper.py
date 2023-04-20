@@ -36,14 +36,16 @@ class YelpScraper:
 
 
     def search_single_restaurant(self,term,location='San Francisco'):
+        """Retreiving Reviews of Single Restaurant"""
 
         self.params['location'] = location
         self.params['term'] = term
         self.params['limit'] = 1
         self.params['offset'] = 0
 
-        response = requests.get(self.url,headers=self.api_header,timeout=25)
-
+        response = requests.get(self.url,headers=self.api_header,timeout=25,
+                                params=self.params)
+        
         result = json.loads(response.text)
         scrape_url = result['businesses'][0]['url'].split('?')[0]
 
@@ -71,3 +73,12 @@ class YelpScraper:
                                     newest_rated_df,elite_rated_df]).reset_index(drop=True)
 
         return rated_content
+    
+
+    # def search_with_url(self,url):
+        
+
+    #     top_rated_url = os.path.join(scrape_url,'?sort_by=rating_desc')
+    #     low_rated_url = os.path.join(scrape_url,'?sort_by=rating_asc')
+    #     newest_rated_url = os.path.join(scrape_url,'?sort_by=date_desc')
+    #     elite_rated_url = os.path.join(scrape_url,'?sort_by=elites_desc')
