@@ -54,11 +54,13 @@ checkpoint = 'facebook/bart-base'
 tokenizer = BartTokenizer.from_pretrained(checkpoint)
 model = BartForConditionalGeneration.from_pretrained(path, local_files_only=True)
 
+
 @app.route('/', methods=['POST', 'GET'])
 def home():
     form = BasicForm()
     return render_template('pages/placeholder.home.html',
                                form=form)
+
 
 @app.route('/search', methods=['POST', 'GET'])
 def search():
@@ -70,7 +72,7 @@ def search():
     input_text = revs.iloc[0,0]
     encoded_text = tokenizer.encode(input_text,return_tensors='pt',max_length=1024)
     outputs = model.generate(input_ids=encoded_text,max_length=150)
-    result = tokenizer.decode(outputs[0]).strip('</s>').strip('<s>')
+    result = tokenizer.decode(outputs[0],skip_special_tokens=True)
     # result = summarizer(revs.iloc[0,0][:4000], max_length=130, min_length=30, do_sample=False)[0]['summary_text']
     return render_template('pages/placeholder.home.result.html',
                            form=form,
