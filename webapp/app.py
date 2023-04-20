@@ -13,6 +13,8 @@ import logging
 from logging import Formatter, FileHandler
 import os
 import pickle
+from yelp_scraper import *
+from user_definition import *
 
 #----------------------------------------------------------------------------#
 # App Config.
@@ -48,35 +50,44 @@ class BasicForm(FlaskForm):
     ids = StringField("ID",validators=[DataRequired()])
     submit = SubmitField("Submit")
 
-def summarizer(restaraunt_name):
-    # storage_client = storage.Client()
+# def summarizer(restaraunt_name):
+#     # storage_client = storage.Client()
 
-    # bucket = storage_client.bucket('your-gcs-bucket')
-    # blob = bucket.blob('dictionary.pickle')
-    # pickle_in = blob.download_as_string()
-    # loaded_model= pickle.loads(pickle_in)
+#     # bucket = storage_client.bucket('your-gcs-bucket')
+#     # blob = bucket.blob('dictionary.pickle')
+#     # pickle_in = blob.download_as_string()
+#     # loaded_model= pickle.loads(pickle_in)
 
-    loaded_model = pickle.load(open('model.pkl', 'rb'))
-    result = loaded_model.predict(restaraunt_name)
-    return result[0], result[1], result[2], result[3]
+#     loaded_model = pickle.load(open('model.pkl', 'rb'))
+#     result = loaded_model.predict(restaraunt_name)
+#     return result[0], result[1], result[2], result[3]
+
+summarizer = pipeline("summarization", model="facebook/bart-large-cnn")
 
 @app.route('/', methods=['POST', 'GET'])
 def home():
     form = BasicForm()
-    generator = pipeline('text-generation', model='openai-gpt')
-    set_seed(42)
-    if request.method == 'POST':
-        # restaraunt_name = Flask.request.form['restaraunt_name']
-        # top, low, newest, elite = summarizer(restaraunt_name) 
-        pred = generator("Hello, I'm a language model,",
-                         max_length=50, num_return_sequences=1)[0]['generated_text']
-        top, low, newest, elite = pred, pred, pred, pred        
-        return render_template('pages/placeholder.home.html',
-                               form=form, top_comm=top,
-                               bottom_comm=low, newest_comm=newest,
-                               elite_comm=elite)
     return render_template('pages/placeholder.home.html',
-                           form=form)
+                               form=form)
+
+@app.route('/search', methods=['POST', 'GET'])
+def search():
+    form = BasicForm()
+    query = request.args.get('query')
+    tool = YelpScraper(url, api_key)
+    revs = tool.search_single_restaurant(query).groupby('review_type').sum()
+    result = pd.DataFrame(index=revs.index, columns=['review summary'])
+    for i in range(revs.shape[0]):
+        tmp = revs.iloc[i,0][:4000]
+        result.iloc[i,0] = summarizer(tmp, max_length=130, min_length=30, do_sample=False)[0]['summary_text']
+    return render_template('pages/placeholder.home.result.html',
+                           form=form,
+                           input_query=query,
+                           top_comm=result.loc['top_rated', 'review summary'],
+                           bottom_comm=result.loc['low_rated', 'review summary'],
+                           newest_comm=result.loc['newest_rated', 'review summary'],
+                           elite_comm=result.loc['elite_rated', 'review summary'])
+
 
 @app.route('/about')
 def about():
