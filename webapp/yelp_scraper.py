@@ -35,7 +35,7 @@ class YelpScraper:
                            'accept': 'application/json'}
 
 
-    def search_single_restaurant(self,term,location='San Francisco'):
+    def search_single_restaurant(self, term, cond, location='San Francisco'):
 
         self.params['location'] = location
         self.params['term'] = term
@@ -52,22 +52,21 @@ class YelpScraper:
         newest_rated_url = os.path.join(scrape_url,'?sort_by=date_desc')
         elite_rated_url = os.path.join(scrape_url,'?sort_by=elites_desc')
 
-        top_rated_content = retrieve_reviews(top_rated_url)
-        low_rated_content = retrieve_reviews(low_rated_url)
-        new_rated_content = retrieve_reviews(newest_rated_url)
-        elite_rated_content = retrieve_reviews(elite_rated_url)
+        if cond=='top rated':
+            top_rated_content = retrieve_reviews(top_rated_url)
+            result = pd.DataFrame({'review_type':['top_rated']*len(top_rated_content),
+                                            'review':top_rated_content})
+        elif cond=='low rated':
+            low_rated_content = retrieve_reviews(low_rated_url)
+            result = pd.DataFrame({'review_type':['low_rated']*len(low_rated_content),
+                                            'review':low_rated_content})
+        elif cond=='newest':
+            new_rated_content = retrieve_reviews(newest_rated_url)
+            result = pd.DataFrame({'review_type':['newest_rated']*len(new_rated_content),
+                                            'review':new_rated_content})
+        elif cond=='elite':
+            elite_rated_content = retrieve_reviews(elite_rated_url)
+            result = pd.DataFrame({'review_type':['elite_rated']*len(elite_rated_content),
+                                            'review':elite_rated_content})
 
-
-        top_rated_df = pd.DataFrame({'review_type':['top_rated']*len(top_rated_content),
-                                        'review':top_rated_content})
-        low_rated_df = pd.DataFrame({'review_type':['low_rated']*len(low_rated_content),
-                                        'review':low_rated_content})
-        newest_rated_df = pd.DataFrame({'review_type':['newest_rated']*len(new_rated_content),
-                                        'review':new_rated_content})
-        elite_rated_df = pd.DataFrame({'review_type':['elite_rated']*len(elite_rated_content),
-                                        'review':elite_rated_content})
-
-        rated_content = pd.concat([top_rated_df,low_rated_df,
-                                    newest_rated_df,elite_rated_df]).reset_index(drop=True)
-
-        return rated_content
+        return result

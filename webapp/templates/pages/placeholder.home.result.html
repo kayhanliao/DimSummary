@@ -8,6 +8,12 @@
 <p class="lead">Type the restaurant name you are interested in and we'll provide you with concise real-time summaries :D</p>
 <form action="/search" method="get">
   <input type="text" name="query" placeholder="Search restaurant...">
+  <select name="category">
+    <option value="top rated">Top Rated</option>
+    <option value="low rated">Low Rated</option>
+    <option value="newest">Newest</option>
+    <option value="elite">Elite</option>
+  </select>
   <input type="submit" value="Search">
 </form>
 {% include 'result/results.html' %}

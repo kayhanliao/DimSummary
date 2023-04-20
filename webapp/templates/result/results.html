@@ -1,21 +1,8 @@
 <div>
     <head>
         <title>Colored Background Text Example</title>
-        <style>
-          /* Apply a blue background color to the text */
-          .colored-background {
-            background-color: rgb(81, 155, 228);
-            color: black; /* Set the text color to white for better contrast */
-          }
-        </style>
     </head>
-    <h2>Restaurant Name: <span class="colored-background">{{input_query}}</span></h2>
-    <h3> Top Rated Reviews Summary</h3>
-    <p> {{ top_comm }}</p>
-    <h3> Low Rated Reviews Summary</h3>
-    <p> {{ bottom_comm }}</p>
-    <h3> Newest Reviews Summary</h3>
-    <p>  {{ newest_comm }}</p>
-    <h3> Elite Reviews Summary</h3>
-    <p>{{ elite_comm }}</p>
+    <h2>Restaurant Name: <code>{{input_query}}</code></h2>
+    <h3> <code>{{selected_cond}}</code> Reviews Summary</h3>
+    <p> {{ comm }}</p>
 </div>
