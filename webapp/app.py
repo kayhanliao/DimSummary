@@ -6,13 +6,15 @@ from flask import Flask, render_template, request
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField
 from wtforms.validators import DataRequired
-from transformers import pipeline, set_seed
-#from google.cloud import storage
-# from flask.ext.sqlalchemy import SQLAlchemy
+# from transformers import pipeline, set_seed
 import logging
 from logging import Formatter, FileHandler
 import os
 import pickle
+from yelp_scraper import *
+from user_definition import *
+from transformers import BartTokenizer, BartForConditionalGeneration
+
 
 #----------------------------------------------------------------------------#
 # App Config.
@@ -20,9 +22,7 @@ import pickle
 
 app = Flask(__name__)
 app.config.from_object('config')
-#db = SQLAlchemy(app)
 
-# Automatically tear down SQLAlchemy.
 '''
 @app.teardown_request
 def shutdown_session(exception=None):
@@ -48,43 +48,44 @@ class BasicForm(FlaskForm):
     ids = StringField("ID",validators=[DataRequired()])
     submit = SubmitField("Submit")
 
-def summarizer(restaraunt_name):
-    # storage_client = storage.Client()
+# summarizer = pipeline("summarization", model="facebook/bart-large-cnn")
+path = 'yelpGPTv1.1/'
+checkpoint = 'facebook/bart-base'
+tokenizer = BartTokenizer.from_pretrained(checkpoint)
+model = BartForConditionalGeneration.from_pretrained(path, local_files_only=True)
 
-    # bucket = storage_client.bucket('your-gcs-bucket')
-    # blob = bucket.blob('dictionary.pickle')
-    # pickle_in = blob.download_as_string()
-    # loaded_model= pickle.loads(pickle_in)
-
-    loaded_model = pickle.load(open('model.pkl', 'rb'))
-    result = loaded_model.predict(restaraunt_name)
-    return result[0], result[1], result[2], result[3]
 
 @app.route('/', methods=['POST', 'GET'])
 def home():
     form = BasicForm()
-    generator = pipeline('text-generation', model='openai-gpt')
-    set_seed(42)
-    if request.method == 'POST':
-        # restaraunt_name = Flask.request.form['restaraunt_name']
-        # top, low, newest, elite = summarizer(restaraunt_name) 
-        pred = generator("Hello, I'm a language model,",
-                         max_length=50, num_return_sequences=1)[0]['generated_text']
-        top, low, newest, elite = pred, pred, pred, pred        
-        return render_template('pages/placeholder.home.html',
-                               form=form, top_comm=top,
-                               bottom_comm=low, newest_comm=newest,
-                               elite_comm=elite)
     return render_template('pages/placeholder.home.html',
-                           form=form)
+                               form=form)
+
+
+@app.route('/search', methods=['POST', 'GET'])
+def search():
+    form = BasicForm()
+    query = request.args.get('query')
+    cat = request.args.get('category')
+    tool = YelpScraper(url, api_key)
+    revs = tool.search_single_restaurant(term=query, cond=cat).groupby('review_type').sum()
+    input_text = revs.iloc[0,0]
+    encoded_text = tokenizer.encode(input_text,return_tensors='pt',max_length=1024)
+    outputs = model.generate(input_ids=encoded_text,max_length=150)
+    result = tokenizer.decode(outputs[0],skip_special_tokens=True)
+    # result = summarizer(revs.iloc[0,0][:4000], max_length=130, min_length=30, do_sample=False)[0]['summary_text']
+    return render_template('pages/placeholder.home.result.html',
+                           form=form,
+                           input_query=query,
+                           selected_cond=cat,
+                           comm=result)
+
 
 @app.route('/about')
 def about():
     return render_template('pages/placeholder.about.html')
 
 # Error handlers.
-
-
 @app.errorhandler(500)
 def internal_error(error):
     #db_session.rollback()
