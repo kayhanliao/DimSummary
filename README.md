@@ -16,11 +16,12 @@ In the modern era, we’re able to fine tune existing robust pretrained models a
 In order to generate summaries, we first needed to tokenize the concatenated reviews. BART has its own tokenizer that comes with the pretrained model. In order to efficiently tokenize the dataset, we wrote a function that would map the tokenizations onto the dataset efficiently. We would make sure to add “summarize: ” in front of every review batch since this is how you prompt the generative model to generate a summary. This is done by training the AutoTokenizer function from Hugging Face which is an alias for the BART tokenizer, allowing you to change words and chars of the text into appropriate input ids. An important note is that the max input size for a BART model (and most models) is 1024 tokens, which is roughly equivalent to 4096 (4 chars per token). We also set our generation output size to be 150 tokens which is around 400-600 chars. Note a word on average is 5-7 chars.  Our resulting model had a resulting ROGUE-1 score of 0.19
 
 *Example Output*
+
 Here is the summarization of top-rated reviews comes out of our fine-tuned BART model for Daeho restaurant:
 Daeho is a popular restaurant in Japantown, San Francisco. The food is delicious and the staff is friendly, attentive, and knowledgeable about the menu. However, some dishes are pricey, and some are not worth the wait. The restaurant is located in an industrial area, and the set up of tables is smartly placed to utilize the space. Overall, Daeho has a great atmosphere and delicious food.
 
 ## Web App
-[Code Link](https://github.com/kayhanliao/restaurant-review-generation/tree/main/webapp)
+[Code Link](https://github.com/kayhanliao/restaurant-review-generation/tree/main/webapp/app.py)
 
 [Web App Link]
 
