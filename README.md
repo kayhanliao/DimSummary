@@ -23,7 +23,7 @@ Daeho is a popular restaurant in Japantown, San Francisco. The food is delicious
 ## Web App
 [Code Link](https://github.com/kayhanliao/restaurant-review-generation/tree/main/webapp/app.py)
 
-[Web App Link]
+[Web App Link](http://yelpgpt.us-east-1.elasticbeanstalk.com/)
 
 ### Home Page
 
