@@ -1,30 +1,31 @@
 #----------------------------------------------------------------------------#
 # Imports
 #----------------------------------------------------------------------------#
+# test comment 
+# from transformers import pipeline, set_seed
+import logging
+import os
+import pickle
+from logging import FileHandler, Formatter
 
 from flask import Flask, render_template, request
 from flask_wtf import FlaskForm
+from transformers import BartForConditionalGeneration, BartTokenizer
 from wtforms import StringField, SubmitField
 from wtforms.validators import DataRequired
-# from transformers import pipeline, set_seed
-import logging
-from logging import Formatter, FileHandler
-import os
-import pickle
-from yelp_scraper import *
+
 from user_definition import *
-from transformers import BartTokenizer, BartForConditionalGeneration
-
+from yelp_scraper import *
 
 #----------------------------------------------------------------------------#
-# App Config.
+# application Config.
 #----------------------------------------------------------------------------#
 
-app = Flask(__name__)
-app.config.from_object('config')
+application = Flask(__name__)
+application.config.from_object('config')
 
 '''
-@app.teardown_request
+@application.teardown_request
 def shutdown_session(exception=None):
     db_session.remove()
 '''
@@ -49,20 +50,20 @@ class BasicForm(FlaskForm):
     submit = SubmitField("Submit")
 
 # summarizer = pipeline("summarization", model="facebook/bart-large-cnn")
-path = 'yelpGPTv1.1/'
-checkpoint = 'facebook/bart-base'
-tokenizer = BartTokenizer.from_pretrained(checkpoint)
-model = BartForConditionalGeneration.from_pretrained(path, local_files_only=True)
+PATH = 'kayhanliao/yelpGPTv1.1'
+CHECKPOINT = 'facebook/bart-base'
+tokenizer = BartTokenizer.from_pretrained(CHECKPOINT)
+model = BartForConditionalGeneration.from_pretrained(PATH)
 
 
-@app.route('/', methods=['POST', 'GET'])
+@application.route('/', methods=['POST', 'GET'])
 def home():
     form = BasicForm()
     return render_template('pages/placeholder.home.html',
                                form=form)
 
 
-@app.route('/search', methods=['POST', 'GET'])
+@application.route('/search', methods=['POST', 'GET'])
 def search():
     form = BasicForm()
     query = request.args.get('query')
@@ -80,31 +81,30 @@ def search():
                            selected_cond=cat,
                            comm=result)
 
-
-@app.route('/about')
+@application.route('/about')
 def about():
     return render_template('pages/placeholder.about.html')
 
 # Error handlers.
-@app.errorhandler(500)
+@application.errorhandler(500)
 def internal_error(error):
     #db_session.rollback()
     return render_template('errors/500.html'), 500
 
 
-@app.errorhandler(404)
+@application.errorhandler(404)
 def not_found_error(error):
     return render_template('errors/404.html'), 404
 
-if not app.debug:
+if not application.debug:
     file_handler = FileHandler('error.log')
     file_handler.setFormatter(
         Formatter('%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]')
     )
-    app.logger.setLevel(logging.INFO)
+    application.logger.setLevel(logging.INFO)
     file_handler.setLevel(logging.INFO)
-    app.logger.addHandler(file_handler)
-    app.logger.info('errors')
+    application.logger.addHandler(file_handler)
+    application.logger.info('errors')
 
 #----------------------------------------------------------------------------#
 # Launch.
@@ -112,11 +112,5 @@ if not app.debug:
 
 # Default port:
 if __name__ == '__main__':
-    app.run()
+    application.run()
 
-# Or specify port manually:
-'''
-if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 5000))
-    app.run(host='0.0.0.0', port=port)
-'''
