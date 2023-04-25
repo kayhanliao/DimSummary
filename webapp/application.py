@@ -68,6 +68,11 @@ def home():
 def search():
     form = BasicForm()
     query = request.args.get('query')
+
+    if len(query) == 0:
+        return render_template('pages/placeholder.home.error.html',
+                        form=form)
+    
     cat = request.args.get('category')
     location = request.args.get('location')
     print()
@@ -76,7 +81,9 @@ def search():
         tool = YelpScraper(url, api_key)
         revs = tool.search_single_restaurant(term=query, cond=cat,location=location).groupby('review_type').sum()    
         input_text = revs.iloc[0,0]
+    
     except:
+
         return render_template('pages/placeholder.home.error.html',
                             form=form)
     
