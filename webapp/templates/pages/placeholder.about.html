@@ -1,10 +1,39 @@
 {% extends 'layouts/main.html' %}
 {% block title %}About{% endblock %}
 {% block content %}
+<style>
+      .container {
+        display: flex;
+        flex-wrap: wrap;
+      }
 
+      .column {
+        flex: 50%;
+        padding: 0 10px;
+      }
+
+      .column img {
+        display: block;
+        max-width: 100%;
+        height: auto;
+        float: left;
+        margin-right: 10px;
+      }
+
+      .column p {
+        margin: 0;
+      }
+
+  </style>
 <div class="page-header">
   <h1>About Page</h1>
 </div>
+<div class="container">
+  <div class="column">
+    <img src="static/ico/logo.png" alt="logo">
+
+  </div>
+<div class="column">
 <p class="lead">Our Mission</p>
 <p>Food is undoubtedly one of life's greatest pleasures. That is why our project's goal is to enhance dining experiences by enabling customers to sample the very best restaurants. 
   Have you ever been too tired to read through lengthy reviews, only to end up disappointed with your dining experience despite a restaurant's high rating? We understand this 
@@ -15,5 +44,21 @@
   this is called opinion summarization. With the rising popularity of language models, our team aims to tackle this task by using natural language processing.</p>
 
 <p> If you have any questions or comments about our product feel free to send an email to _______ and we will respond shortly. Happy eating and we hope you enjoy using our product!</p>
+</div>
+</div>
+<style>
+      .container {
+        display: flex;
+        flex-wrap: wrap;
+      }
 
+      .column {
+        flex: 50%;
+        padding: 10px;
+      }
+
+      .column img {
+        max-width: 100%;
+        height: auto;
+      }
 {% endblock %}

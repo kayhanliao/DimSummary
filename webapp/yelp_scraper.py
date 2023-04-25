@@ -33,9 +33,12 @@ class YelpScraper:
         self.params = {}
         self.api_header = {'Authorization': self.api_key,
                            'accept': 'application/json'}
+        self.name = None
 
 
-    def search_single_restaurant(self, term, cond, location='San Francisco'):
+    def search_single_restaurant(self, term, cond='top_rated', location='San Francisco'):
+
+        self.name = term
 
         self.params['location'] = location
         self.params['term'] = term
@@ -46,6 +49,8 @@ class YelpScraper:
 
         result = json.loads(response.text)
         scrape_url = result['businesses'][0]['url'].split('?')[0]
+
+        self.name = result['name']
 
         top_rated_url = os.path.join(scrape_url,'?sort_by=rating_desc')
         low_rated_url = os.path.join(scrape_url,'?sort_by=rating_asc')
@@ -70,3 +75,6 @@ class YelpScraper:
                                             'review':elite_rated_content})
 
         return result
+    
+    def get_name(self):
+        return self.name

@@ -11,10 +11,9 @@ from logging import FileHandler, Formatter
 from flask import Flask, render_template, request
 from flask_wtf import FlaskForm
 from transformers import BartForConditionalGeneration, BartTokenizer
+from user_definition import *
 from wtforms import StringField, SubmitField
 from wtforms.validators import DataRequired
-
-from user_definition import *
 from yelp_scraper import *
 
 #----------------------------------------------------------------------------#
@@ -68,16 +67,27 @@ def search():
     form = BasicForm()
     query = request.args.get('query')
     cat = request.args.get('category')
-    tool = YelpScraper(url, api_key)
-    revs = tool.search_single_restaurant(term=query, cond=cat).groupby('review_type').sum()
-    input_text = revs.iloc[0,0]
+    location = request.args.get('location')
+
+    try:
+
+        tool = YelpScraper(url, api_key)
+        revs = tool.search_single_restaurant(term=query, cond=cat,location=location).groupby('review_type').sum()    
+        input_text = revs.iloc[0,0]
+    
+    except:
+    
+        return render_template('pages/placeholder.home.error.html',
+                            form=form)
+
     encoded_text = tokenizer.encode(input_text,return_tensors='pt',max_length=1024)
     outputs = model.generate(input_ids=encoded_text,max_length=150)
     result = tokenizer.decode(outputs[0],skip_special_tokens=True)
-    # result = summarizer(revs.iloc[0,0][:4000], max_length=130, min_length=30, do_sample=False)[0]['summary_text']
+    restaurant_name = tool.get_name() 
+
     return render_template('pages/placeholder.home.result.html',
                            form=form,
-                           input_query=query,
+                           input_query=restaurant_name,
                            selected_cond=cat,
                            comm=result)
 
