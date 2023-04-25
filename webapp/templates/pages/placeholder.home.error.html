@@ -7,25 +7,28 @@
   <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 </head>
 <div class="page-header">
-  <img src="static/ico/logo.png" alt="logo">
-  <h1>Yelp Review Summarization for Restaurants</h1>
+  <h1> DimSummary </h1>
+  <h2>Yelp Review Summarization for Restaurants</h2>
 </div>
 <p class="lead">Type the restaurant name you are interested in and we'll provide you with concise real-time summaries :D</p>
-<form action="/search" method="get">
-  <input type="text" name="query" placeholder="Search restaurant...">
-  <select name="category">
+<form class="form-inline my-2 my-lg-0" action="/search" method="get">
+  <div class="search-container">
+  <input class="form-control mr-sm-2" type="search" name="query" placeholder="Search restaurant...">
+  <select  class="form-select" name="category" style="height: 34px; vertical-align: middle; text-align: left; min-width: 120px; text">
     <option value="top rated">Top Rated</option>
     <option value="low rated">Low Rated</option>
     <option value="newest">Newest</option>
     <option value="elite">Elite</option>
   </select>
-  <select name="location">
+  <select  class="form-select form-select-sm" name="location" style="height: 34px; vertical-align: middle; text-align: left;">
     <option value="San Francisco">San Francisco</option>
   </select>
-  <button type="submit" id="search_btn">Search</button>
+  <button class="btn btn-outline-success my-2 my-sm-0" type="submit" id="search_btn">Search</button>
 </form>
+<div class="search-container">
+
 <br>
-<p class="head" style="color: red;">Please enter a valid restaurant</p>
+<p class="lead" style="color: red;">Invalid inputs: Please select an option or enter a valid restaurant</p>
 <div id="loader">
   <div class="bar"></div>
 </div>
@@ -67,6 +70,14 @@ position: absolute;
 top: 0;
 left: 0;
 animation: progress 2s ease-out infinite;
+}
+
+
+.search-container {
+  font-size: 130%;  
+}
+.form-select {
+  font-size: 77%;
 }
 
 @keyframes progress {

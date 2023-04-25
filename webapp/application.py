@@ -70,21 +70,32 @@ def search():
     query = request.args.get('query')
     cat = request.args.get('category')
     location = request.args.get('location')
+    print()
 
     try:
-
         tool = YelpScraper(url, api_key)
         revs = tool.search_single_restaurant(term=query, cond=cat,location=location).groupby('review_type').sum()    
         input_text = revs.iloc[0,0]
-    
     except:
-    
         return render_template('pages/placeholder.home.error.html',
                             form=form)
+    
 
     encoded_text = tokenizer.encode(input_text,return_tensors='pt',max_length=1024)
-    outputs = model.generate(input_ids=encoded_text,max_length=150)
+    outputs = model.generate(input_ids=encoded_text, max_length=120)
     result = tokenizer.decode(outputs[0],skip_special_tokens=True)
+    if result.endswith("."):
+        pass
+
+    elif result.endswith('?') or result.endswith('!'):
+        pass
+
+    elif result.endswith(','):
+        result = result[:-1] + '..'
+
+    else:
+        result += '..'
+
     restaurant_name = tool.get_name() 
 
     return render_template('pages/placeholder.home.result.html',
@@ -125,4 +136,3 @@ if not application.debug:
 # Default port:
 if __name__ == '__main__':
     application.run()
-

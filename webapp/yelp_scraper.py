@@ -48,9 +48,14 @@ class YelpScraper:
         response = requests.get(self.url,headers=self.api_header,params=self.params, timeout=25)
 
         result = json.loads(response.text)
+        
+        with open('resukt.txt', 'w') as f:
+            f.write(str([self.params,cond,location,term,self.url,self.api_header]))
+
+
         scrape_url = result['businesses'][0]['url'].split('?')[0]
 
-        self.name = result['name']
+        self.name = result['businesses'][0]['name']
 
         top_rated_url = os.path.join(scrape_url,'?sort_by=rating_desc')
         low_rated_url = os.path.join(scrape_url,'?sort_by=rating_asc')
