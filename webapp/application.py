@@ -10,7 +10,8 @@ from logging import FileHandler, Formatter
 
 from flask import Flask, render_template, request
 from flask_wtf import FlaskForm
-from transformers import BartForConditionalGeneration, BartTokenizer
+from transformers import (AutoModelForSeq2SeqLM, AutoTokenizer,
+                          T5ForConditionalGeneration)
 from user_definition import *
 from wtforms import StringField, SubmitField
 from wtforms.validators import DataRequired
@@ -49,10 +50,11 @@ class BasicForm(FlaskForm):
     submit = SubmitField("Submit")
 
 # summarizer = pipeline("summarization", model="facebook/bart-large-cnn")
-PATH = 'kayhanliao/yelpGPTv1.1'
-CHECKPOINT = 'facebook/bart-base'
-tokenizer = BartTokenizer.from_pretrained(CHECKPOINT)
-model = BartForConditionalGeneration.from_pretrained(PATH)
+PATH = 'kayhanliao/yelpGPTv1.2'
+# CHECKPOINT = 'facebook/bart-base'
+CHECKPOINT = 't5-base'
+tokenizer = AutoTokenizer.from_pretrained(CHECKPOINT)
+model = T5ForConditionalGeneration.from_pretrained(PATH)
 
 
 @application.route('/', methods=['POST', 'GET'])
