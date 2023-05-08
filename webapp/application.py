@@ -10,8 +10,10 @@ from logging import FileHandler, Formatter
 
 from flask import Flask, render_template, request
 from flask_wtf import FlaskForm
-from transformers import (AutoModelForSeq2SeqLM, AutoTokenizer,
-                          T5ForConditionalGeneration)
+# from transformers import (BartForConditionalGeneration, AutoTokenizer,
+#                           T5ForConditionalGeneration)
+# from transformers import BartForConditionalGeneration, BartTokenizer
+from transformers import T5ForConditionalGeneration, T5Tokenizer
 from user_definition import *
 from wtforms import StringField, SubmitField
 from wtforms.validators import DataRequired
@@ -51,9 +53,9 @@ class BasicForm(FlaskForm):
 
 # summarizer = pipeline("summarization", model="facebook/bart-large-cnn")
 PATH = 'kayhanliao/yelpGPTv1.2'
-# CHECKPOINT = 'facebook/bart-base'
+# PATH = 'facebook/bart-base'
 CHECKPOINT = 't5-base'
-tokenizer = AutoTokenizer.from_pretrained(CHECKPOINT)
+tokenizer = T5Tokenizer.from_pretrained(CHECKPOINT)
 model = T5ForConditionalGeneration.from_pretrained(PATH)
 
 
@@ -88,9 +90,10 @@ def search():
                             form=form)
     
 
-    encoded_text = tokenizer.encode(input_text,return_tensors='pt',max_length=1024)
-    outputs = model.generate(input_ids=encoded_text, max_length=120)
+    encoded_text = tokenizer.encode(input_text,return_tensors='pt',max_length=2048)
+    outputs = model.generate(input_ids=encoded_text, max_length=80)
     result = tokenizer.decode(outputs[0],skip_special_tokens=True)
+    
     if result.endswith("."):
         pass
 
