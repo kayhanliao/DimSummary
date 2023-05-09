@@ -51,13 +51,13 @@ class DashBoard:
             review_type_title_str = ' '.join(split_rev)
         else:
             review_type_title_str = 'All'
-        title = f'NLP Insights of {restaurant_name_title_str} of {review_type_title_str} Reviews'
-        self.fig.suptitle(title)
+        title = f'NLP Insights of {restaurant_name_title_str} with {review_type_title_str} Reviews'
+        self.fig.suptitle(title,fontsize=20)
 
     def create_word_cloud(self):
         
         wc_df = self.df
-        text = wc_df.groupby('name')['review'].apply(lambda x : '\n'.join(x)).reset_index(drop=True)[0]
+        text = wc_df.groupby('name')['review'].apply(lambda x : '\n'.join(x))[0]
         text = text.lower()
 
         ctrl_chars = '\x00-\x1f'
@@ -72,11 +72,11 @@ class DashBoard:
         filtered_text = [word for word in filtered_text if word not in food_stop_words]
         filtered_text = ' '.join(filtered_text)
 
-        wc = WordCloud(width=300, height=300, background_color='white', min_font_size=10,
-                        colormap='Set1').generate(filtered_text)
-        
+        wc = WordCloud(background_color='white', min_font_size=10,
+                        colormap='turbo').generate(filtered_text)
 
-        self.ax[1,1].imshow(wc)
+        self.ax[1,1].imshow(wc,interpolation='bilinear')
+        
         self.ax[1,1].set_title('Word Cloud',pad=20,y=-0.3)
         self.ax[1,1].axis("off")
                 
@@ -94,7 +94,7 @@ class DashBoard:
     def create_word_count_chart(self):
         wc_df = self.df
         
-        text = wc_df.groupby('name')['review'].apply(lambda x : '\n'.join(x)).reset_index(drop=True)[0]
+        text = wc_df.groupby('name')['review'].apply(lambda x : '\n'.join(x))[0]
         text = text.lower()
         
         ctrl_chars = '\x00-\x1f'
@@ -135,10 +135,15 @@ class DashBoard:
     def visualize(self):
 
         self.create_subplot(figsize_width=16,figsize_height=8)
-        self.create_word_count_chart()
-        self.create_toxic_pie_chart()
-        self.create_sentiment_plot()
-        self.create_word_cloud()
+        if len(self.df) == 0:
+            self.fig.suptitle('No Reviews found for this Restaurant with this Review Type',fontsize=20)
+        else:
+            self.create_word_count_chart()
+            self.create_toxic_pie_chart()
+            self.create_sentiment_plot()
+            self.create_word_cloud()
 
-        plt.subplots_adjust(wspace=0.4, hspace=0.4)
-        plt.show()
+            plt.subplots_adjust(hspace=0.4)
+            plt.show()
+            
+        self.fig.savefig('visualization.jpg')
