@@ -135,7 +135,7 @@ class DashBoard:
     
     def visualize(self):
 
-        self.create_subplot(figsize_width=16,figsize_height=8)
+        self.create_subplot(figsize_width=16,figsize_height=10)
         if len(self.df) == 0:
             self.fig.suptitle('No Reviews found for this Restaurant with this Review Type',fontsize=20)
         else:

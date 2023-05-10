@@ -127,8 +127,9 @@ def about():
 def dashboard():
     form = BasicForm()
     query = request.args.get('query')
+    cat = request.args.get('category')
     dashboard_path = 'data/reviews_san_francisco_nlp_labels.csv'
-    dashboard = DashBoard(dashboard_path,restaurant_name=query)
+    dashboard = DashBoard(dashboard_path,restaurant_name=query, review_type=cat)
     dashboard.visualize()
     return render_template('pages/placeholder.dashboard.html', plot='visualization.png')
 
