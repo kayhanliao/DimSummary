@@ -125,9 +125,11 @@ def about():
 
 @application.route('/dashboard')
 def dashboard():
-    # dashboard_path = 'data/reviews_san_francisco_nlp_labels.csv'
-    # dashboard = DashBoard(dashboard_path,restaurant_name='Kothai Republic')
-    # dashboard.visualize()
+    form = BasicForm()
+    query = request.args.get('query')
+    dashboard_path = 'data/reviews_san_francisco_nlp_labels.csv'
+    dashboard = DashBoard(dashboard_path,restaurant_name=query)
+    dashboard.visualize()
     return render_template('pages/placeholder.dashboard.html', plot='visualization.png')
 
 # Error handlers.

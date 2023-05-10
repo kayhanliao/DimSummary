@@ -1,6 +1,5 @@
 import pandas as pd
 import seaborn as sns
-import matplotlib.pyplot as plt
 import numpy as np
 import matplotlib.pyplot as plt
 from wordcloud import WordCloud
@@ -8,7 +7,8 @@ import nltk
 from nltk.corpus import stopwords
 import re
 import string
-import io
+import matplotlib
+matplotlib.use('agg')
 
 nltk.download('stopwords')
 nltk.download('punkt')

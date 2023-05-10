@@ -3,7 +3,8 @@
 {% block content %}
 
 <head>
-    <title>My Web App</title>
+    <title>YelpGPT Dashboard</title>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <style>
         img {
             max-width: 100%;
@@ -11,9 +12,24 @@
         }
     </style>
 </head>
+<div class="search-container">
+    <!-- <p class="lead">Type the restaurant name you are interested in and we'll provide you with concise real-time summaries :D</p> -->
+    <form class="form-inline my-2 my-lg-0" action="/dashboard" method="get" onsubmit="disableButton()">
+      <input class="form-control mr-sm-2" type="search" name="query" placeholder="Search restaurant...">
+      <button class="btn btn-outline-success my-2 my-sm-0" type="submit" id="search_btn">Search</button>
+    </form>
+
 <body>
     <img src="/static/img/{{plot}}" alt="My Plot">
 </body>
+
+<script>
+    function disableButton() {
+      var btn = document.getElementById('search_btn');
+      btn.disabled = true;
+      btn.innerHTML = 'Searching...';
+    }
+</script>
 
 
 {% endblock %}
