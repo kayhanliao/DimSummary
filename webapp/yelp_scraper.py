@@ -1,5 +1,6 @@
 import json
 import os
+import re
 from datetime import datetime
 from time import sleep
 
@@ -12,13 +13,10 @@ from bs4 import BeautifulSoup
 def retrieve_reviews(url):
     content = requests.get(url,timeout=20)
     soup = BeautifulSoup(content.content, "html.parser")
-    relevant = soup.find_all('p', class_='comment__09f24__gu0rG css-qgunke')
-    reviews = []
-    
-    for rev in relevant:
-        review = rev.find('span').getText()
-        reviews.append(review)
 
+    reviews = soup.find_all('p', class_=re.compile('comment'))
+    reviews = [review.text for review in reviews if 'truncated' not in str(review) ]
+    
     return reviews
 
 
@@ -48,10 +46,6 @@ class YelpScraper:
         response = requests.get(self.url,headers=self.api_header,params=self.params, timeout=25)
 
         result = json.loads(response.text)
-        
-        with open('resukt.txt', 'w') as f:
-            f.write(str([self.params,cond,location,term,self.url,self.api_header]))
-
 
         scrape_url = result['businesses'][0]['url'].split('?')[0]
 

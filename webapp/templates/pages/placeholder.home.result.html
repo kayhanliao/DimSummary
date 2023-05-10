@@ -12,7 +12,7 @@
 </div>
 <div class="search-container">
   <p class="lead">Type the restaurant name you are interested in and we'll provide you with concise real-time summaries :D</p>
-  <form class="form-inline my-2 my-lg-0" action="/search" method="get">
+  <form class="form-inline my-2 my-lg-0" action="/search" method="get" onsubmit="disableButton()">
     <input class="form-control mr-sm-2" type="search" name="query" placeholder="Search restaurant...">
     <select  class="form-select" name="category" style="height: 34px; vertical-align: middle; text-align: left; min-width: 120px; text">
       <option value="top rated">Top Rated</option>
@@ -21,7 +21,10 @@
       <option value="elite">Elite</option>
     </select>
     <select  class="form-select form-select-sm" name="location" style="height: 34px; vertical-align: middle; text-align: left;">
-      <option value="San Francisco">San Francisco</option>
+      <!-- <option value="San Francisco">San Francisco</option> -->
+      {% for item in items %}
+          <option value="{{ item }}">{{ item }}</option>
+      {% endfor %}
     </select>
     <button class="btn btn-outline-success my-2 my-sm-0" type="submit" id="search_btn">Search</button>
   </form>
@@ -44,6 +47,14 @@
       $('#loader').hide();
     });
   });
+</script>
+
+<script>
+  function disableButton() {
+    var btn = document.getElementById('search_btn');
+    btn.disabled = true;
+    btn.innerHTML = 'Searching...';
+  }
 </script>
 
 <style>

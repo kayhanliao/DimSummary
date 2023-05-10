@@ -8,7 +8,7 @@ import os
 import pickle
 from logging import FileHandler, Formatter
 
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, send_file
 from flask_wtf import FlaskForm
 # from transformers import (BartForConditionalGeneration, AutoTokenizer,
 #                           T5ForConditionalGeneration)
@@ -18,6 +18,7 @@ from user_definition import *
 from wtforms import StringField, SubmitField
 from wtforms.validators import DataRequired
 from yelp_scraper import *
+from dashboard import *
 
 #----------------------------------------------------------------------------#
 # application Config.
@@ -58,12 +59,15 @@ CHECKPOINT = 't5-base'
 tokenizer = T5Tokenizer.from_pretrained(CHECKPOINT)
 model = T5ForConditionalGeneration.from_pretrained(PATH)
 
+cities = pd.read_csv('data/uscities.csv')
+cities = cities[cities['state_id']=='CA']['city'].to_list()
 
 @application.route('/', methods=['POST', 'GET'])
 def home():
     form = BasicForm()
     return render_template('pages/placeholder.home.html',
-                               form=form)
+                            form=form,
+                            items=cities)
 
 
 @application.route('/search', methods=['POST', 'GET'])
@@ -112,11 +116,19 @@ def search():
                            form=form,
                            input_query=restaurant_name,
                            selected_cond=cat,
-                           comm=result)
+                           comm=result,
+                           items=cities)
 
 @application.route('/about')
 def about():
     return render_template('pages/placeholder.about.html')
+
+@application.route('/dashboard')
+def dashboard():
+    # dashboard_path = 'data/reviews_san_francisco_nlp_labels.csv'
+    # dashboard = DashBoard(dashboard_path,restaurant_name='Kothai Republic')
+    # dashboard.visualize()
+    return render_template('pages/placeholder.dashboard.html', plot='visualization.png')
 
 # Error handlers.
 @application.errorhandler(500)

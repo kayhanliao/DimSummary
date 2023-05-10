@@ -1,0 +1,19 @@
+{% extends 'layouts/main.html' %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+
+<head>
+    <title>My Web App</title>
+    <style>
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+    <img src="/static/img/{{plot}}" alt="My Plot">
+</body>
+
+
+{% endblock %}
