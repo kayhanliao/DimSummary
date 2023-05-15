@@ -1,4 +1,4 @@
-# Yelp Restaurant Review Generation
+#DimSummary: Opinion Summarization of Yelp Restaurant Reviews
 ## Intro
 This project is dedicated to create an end-to-end product providing Yelp review summarization. Our team members are Kayhan Eryilmaz(kayhankubi@gmail.com), Chenxi Li(lichenxi1113@gmail.com), Brooks Diwu(@), Kelley Chu(@) and Justin Chan(@).
 
