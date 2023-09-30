@@ -7,7 +7,7 @@ This project is dedicated to create an end-to-end product providing Yelp review 
 - Kelley Chu
 - Justin Chan
 
-The Project Presentation:[Code Link](https://github.com/kayhanliao/DimSummary/blob/main/Dim%20Summary%20Pitch.pdf)
+[The Project Presentation](https://github.com/kayhanliao/DimSummary/blob/main/Dim%20Summary%20Pitch.pdf)
 
 In this project, we used **Yelp API, OpenAI API and web scraper** to retrieve restaurants' basic information and reviews. We created **MongoDB Atlas** to shard the raw data from **Google Cloud Platform (GCP)** buckets into clusters to improve the efficiency of reading and writing data. After performing data preprocessing, we trained and fine-tuned the **BART NLP model** to create review summarization for each restaurant. In order to keep our training data and model updated, we set up a pipeline and schedule to run it using **Airflow**. We created an web app using **Flask** and deployed it using **AWS** so that it can be accessed by anyone with log-in credentials.
 ![image](https://user-images.githubusercontent.com/82719564/233866687-2d09314c-7ad6-4d11-97ba-43a9d8048241.png)
